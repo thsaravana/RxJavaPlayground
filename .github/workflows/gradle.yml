@@ -28,7 +28,17 @@ jobs:
         GITHUB_CONTEXT: ${{ toJSON(github) }}
       run: echo "$GITHUB_CONTEXT"
 
-    - name: If Staging
+    - name: Get tag
       env:
         BUILD_TAG: ${{ github.ref }}
       run: echo "$BUILD_TAG"
+
+    - name: Build Type
+      env:
+        IS_STAGING: ${{ endsWith(github.ref, '-staging') }}
+      run: echo "$IS_STAGING"
+
+    - name: If Staging
+      if: ${{ env.IS_STAGING }}
+      run: echo "This is staging"
+
