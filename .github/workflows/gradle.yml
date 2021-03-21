@@ -38,7 +38,15 @@ jobs:
         IS_STAGING: ${{ endsWith(github.ref, '-staging') }}
       run: echo "$IS_STAGING"
 
+    - name: Dump Env context
+      env:
+        ENV_CONTEXT: ${{ toJSON(env) }}
+      run: echo "$ENV_CONTEXT"
+
     - name: If Staging
-      if: ${{ env.IS_STAGING }}
+      if: ${{ endsWith(github.ref, '-staging') }}
       run: echo "This is staging"
 
+    - name: If Not Staging
+      if: ${{ !endsWith(github.ref, '-staging') }}
+      run: echo "This is not Staging"
