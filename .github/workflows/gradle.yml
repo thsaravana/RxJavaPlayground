@@ -6,6 +6,8 @@ name: Test Release
 on:
   release:
     types: [created, edited]
+  pull_request:
+    types: [opened, ready_for_review, synchronize]
 
 jobs:
   build:
@@ -50,3 +52,23 @@ jobs:
     - name: If Not Staging
       if: ${{ !endsWith(github.ref, '-staging') }}
       run: echo "This is not Staging"
+
+    - name: Generate Build Number
+      run: |
+        offset=392
+        buildNumber=$(($GITHUB_RUN_NUMBER + $offset))
+        echo "BUILD_NUMBER=$buildNumber" >> $GITHUB_ENV
+
+    - name: Generate Build Name [Staging]
+      if: ${{ endsWith(github.ref, '-staging') }}
+      run: |
+        buildName=Freshdesk-playstoreStagingRelease-$BUILD_NUMBER.apk
+        echo $buildName
+        echo "BUILD_NAME=$buildName" >> $GITHUB_ENV
+
+    - name: Generate Build Name [Production]
+      if: ${{ !endsWith(github.ref, '-staging') }}
+      run: |
+        buildName=Freshdesk-playstoreProductionRelease-$BUILD_NUMBER.apk
+        echo $buildName
+        echo "BUILD_NAME=$buildName" >> $GITHUB_ENV
